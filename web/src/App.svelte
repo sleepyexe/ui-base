@@ -11,6 +11,7 @@
   import WeatherView from "./components/WeatherView.svelte";
   import TimeView from "./components/TimeView.svelte";
   import ScheduleView from "./components/ScheduleView.svelte";
+  import { Button } from "$lib/components/ui/button";
   import { fetchNui } from "./utils/fetchNui";
   import { useNuiEvent } from "./utils/useNuiEvent";
   import { isEnvBrowser } from "./utils/misc";
@@ -138,20 +139,22 @@
 {#if isEnvBrowser()}
   <div class="fixed bottom-4 left-4 z-50 flex items-center gap-2">
     {#if !visible}
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        size="sm"
         onclick={() => (visible = true)}
-        class="rounded-xl border border-white/10 bg-[#161922] px-3.5 py-1.5 text-xs font-semibold text-white shadow hover:bg-[#1e2330]"
+        class="rounded-xl border-white/10 bg-[#161922] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-[#1e2330]"
       >
         Open Tablet
-      </button>
+      </Button>
     {/if}
-    <button
-      type="button"
+    <Button
+      variant="outline"
+      size="sm"
       onclick={toggleBrowserBackground}
-      class="rounded-xl border border-white/10 bg-[#161922]/80 px-3 py-1.5 text-xs text-neutral-300 backdrop-blur hover:text-white"
+      class="rounded-xl border-white/10 bg-[#161922]/80 px-3 py-1.5 text-xs text-neutral-300 backdrop-blur-xs hover:bg-[#1e2330]/80 hover:text-white"
     >
       Toggle Background ({isNightBg ? "Night" : "Day"})
-    </button>
+    </Button>
   </div>
 {/if}

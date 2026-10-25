@@ -1,5 +1,8 @@
 <script lang="ts">
-  import Switch from './Switch.svelte';
+  import { Switch } from '$lib/components/ui/switch';
+  import { Card, CardContent } from '$lib/components/ui/card';
+  import { Badge } from '$lib/components/ui/badge';
+  import { Slider } from '$lib/components/ui/slider';
   import WeatherIcons from './icons/WeatherIcons.svelte';
   import { fetchNui } from '../utils/fetchNui';
 
@@ -18,6 +21,16 @@
     autoCycle = val;
     fetchNui('toggleAutoWeatherCycle', { enabled: val, interval: cycleInterval }).catch(() => {});
   }
+
+  function handleIntervalChange(val: number) {
+    cycleInterval = val;
+    fetchNui('toggleAutoWeatherCycle', { enabled: autoCycle, interval: val }).catch(() => {});
+  }
+
+  function handleDurationChange(val: number) {
+    transitionDuration = val;
+    fetchNui('setWeatherTransitionDuration', { duration: val }).catch(() => {});
+  }
 </script>
 
 <div class="space-y-6">
@@ -28,85 +41,94 @@
     <p class="text-xs text-neutral-400">Automate dynamic meteorological transitions.</p>
 
     <div class="mt-3 grid grid-cols-2 gap-4">
-      <div class="rounded-2xl border border-white/[0.06] bg-[#161922]/90 p-5 backdrop-blur-sm">
-        <div class="flex items-center justify-between">
-          <span class="text-sm font-semibold text-white">Dynamic Weather Cycle</span>
-          <div class="flex items-center gap-3">
-            <span class="text-xs {autoCycle ? 'text-white' : 'text-neutral-500'}">
-              {autoCycle ? 'Enabled' : 'Disabled'}
-            </span>
-            <Switch checked={autoCycle} onchange={toggleAutoCycle} />
-          </div>
-        </div>
-
-        <div class="mt-5 space-y-4">
-          <div>
-            <div class="flex justify-between text-xs text-neutral-400 mb-1">
-              <span>Cycle Interval</span>
-              <span class="text-white font-medium">{cycleInterval} mins</span>
+      <Card class="rounded-2xl border-white/[0.06] bg-[#161922]/90 backdrop-blur-xs shadow-xs">
+        <CardContent class="p-5">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-semibold text-white">Dynamic Weather Cycle</span>
+            <div class="flex items-center gap-3">
+              <span class="text-xs {autoCycle ? 'text-white' : 'text-neutral-500'}">
+                {autoCycle ? 'Enabled' : 'Disabled'}
+              </span>
+              <Switch checked={autoCycle} onCheckedChange={toggleAutoCycle} />
             </div>
-            <input
-              type="range"
-              min="5"
-              max="60"
-              step="5"
-              bind:value={cycleInterval}
-              class="w-full accent-amber-400 cursor-pointer h-1.5 bg-neutral-700 rounded-lg appearance-none"
-            />
           </div>
 
-          <div>
-            <div class="flex justify-between text-xs text-neutral-400 mb-1">
-              <span>Transition Smoothing Duration</span>
-              <span class="text-white font-medium">{transitionDuration} seconds</span>
+          <div class="mt-5 space-y-4">
+            <div>
+              <div class="flex justify-between text-xs text-neutral-400 mb-2">
+                <span>Cycle Interval</span>
+                <span class="text-white font-medium">{cycleInterval} mins</span>
+              </div>
+              <Slider
+                type="single"
+                min={5}
+                max={60}
+                step={5}
+                bind:value={cycleInterval}
+                onValueChange={handleIntervalChange}
+                class="py-1 cursor-pointer"
+              />
             </div>
-            <input
-              type="range"
-              min="5"
-              max="60"
-              step="5"
-              bind:value={transitionDuration}
-              class="w-full accent-amber-400 cursor-pointer h-1.5 bg-neutral-700 rounded-lg appearance-none"
-            />
+
+            <div>
+              <div class="flex justify-between text-xs text-neutral-400 mb-2">
+                <span>Transition Smoothing Duration</span>
+                <span class="text-white font-medium">{transitionDuration} seconds</span>
+              </div>
+              <Slider
+                type="single"
+                min={5}
+                max={60}
+                step={5}
+                bind:value={transitionDuration}
+                onValueChange={handleDurationChange}
+                class="py-1 cursor-pointer"
+              />
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div class="rounded-2xl border border-white/[0.06] bg-[#161922]/90 p-5 backdrop-blur-sm">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-sm font-semibold text-white">Forecast Queue</span>
-          <span class="text-xs text-neutral-400">4 Stages</span>
-        </div>
+      <Card class="rounded-2xl border-white/[0.06] bg-[#161922]/90 backdrop-blur-xs shadow-xs">
+        <CardContent class="p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-semibold text-white">Forecast Queue</span>
+            <Badge variant="outline" class="border-white/10 text-neutral-400 text-xs">
+              4 Stages
+            </Badge>
+          </div>
 
-        <div class="space-y-2">
-          {#each forecastQueue as stage}
-            <div
-              class="flex items-center justify-between rounded-xl border border-white/[0.04] bg-[#11131a] px-3.5 py-2"
-            >
-              <div class="flex items-center gap-3">
-                <div class="text-neutral-300">
-                  <WeatherIcons name={stage.icon} className="h-4 w-4" />
+          <div class="space-y-2">
+            {#each forecastQueue as stage}
+              <div
+                class="flex items-center justify-between rounded-xl border border-white/[0.04] bg-[#11131a] px-3.5 py-2"
+              >
+                <div class="flex items-center gap-3">
+                  <div class="text-neutral-300">
+                    <WeatherIcons name={stage.icon} className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <span class="text-xs font-semibold text-white">{stage.weather}</span>
+                    <span class="ml-2 text-[10px] text-neutral-400">{stage.time}</span>
+                  </div>
                 </div>
-                <div>
-                  <span class="text-xs font-semibold text-white">{stage.weather}</span>
-                  <span class="ml-2 text-[10px] text-neutral-400">{stage.time}</span>
+
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-mono text-neutral-300">{stage.temp}</span>
+                  <Badge
+                    variant={stage.status === 'Active' ? 'default' : 'secondary'}
+                    class="rounded-md px-1.5 py-0.5 text-[10px] font-medium {stage.status === 'Active'
+                      ? 'bg-amber-400/10 text-amber-400 hover:bg-amber-400/20'
+                      : 'bg-white/5 text-neutral-400'}"
+                  >
+                    {stage.status}
+                  </Badge>
                 </div>
               </div>
-
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-mono text-neutral-300">{stage.temp}</span>
-                <span
-                  class="rounded-md px-1.5 py-0.5 text-[10px] font-medium {stage.status === 'Active'
-                    ? 'bg-amber-400/10 text-amber-400'
-                    : 'bg-white/5 text-neutral-400'}"
-                >
-                  {stage.status}
-                </span>
-              </div>
-            </div>
-          {/each}
-        </div>
-      </div>
+            {/each}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   </section>
 </div>

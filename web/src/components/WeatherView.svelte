@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { EnvironmentalData, WeatherManagerSettings, WeatherTypeItem } from '../types';
-  import Switch from './Switch.svelte';
+  import { Switch } from '$lib/components/ui/switch';
+  import { Card, CardContent } from '$lib/components/ui/card';
+  import { Button } from '$lib/components/ui/button';
+  import { Separator } from '$lib/components/ui/separator';
   import WeatherIcons from './icons/WeatherIcons.svelte';
   import { fetchNui } from '../utils/fetchNui';
 
@@ -69,119 +72,126 @@
     <p class="text-xs text-neutral-400">Lorem ipsum dolor sit amet consectetur.</p>
 
     <div class="mt-3 grid grid-cols-2 gap-4">
-      <div class="rounded-2xl border border-white/10 bg-[#161922]/90 p-5 backdrop-blur-sm shadow-sm">
-        <div class="flex items-center justify-between text-xs text-neutral-400">
-          <span>{environmentalData.dayName}</span>
-          <span>{environmentalData.currentTime}</span>
-        </div>
+      <Card class="rounded-2xl border-white/10 bg-[#161922]/90 backdrop-blur-sm shadow-xs">
+        <CardContent class="p-5">
+          <div class="flex items-center justify-between text-xs text-neutral-400">
+            <span>{environmentalData.dayName}</span>
+            <span>{environmentalData.currentTime}</span>
+          </div>
 
-        <div class="my-4 flex items-center justify-between">
-          <span class="text-5xl font-bold tracking-tight text-white">
-            {environmentalData.temperature}&deg;
-          </span>
-          <div class="text-white">
-            <WeatherIcons name="moon" className="h-10 w-10" />
+          <div class="my-4 flex items-center justify-between">
+            <span class="text-5xl font-bold tracking-tight text-white">
+              {environmentalData.temperature}&deg;
+            </span>
+            <div class="text-white">
+              <WeatherIcons name="moon" className="h-10 w-10" />
+            </div>
           </div>
-        </div>
 
-        <div class="space-y-1.5 pt-2 text-xs">
-          <div class="flex items-center justify-between">
-            <span class="text-neutral-400">Feels Like</span>
-            <span class="font-medium text-white">{environmentalData.feelsLike}&deg;</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-neutral-400">Wind Percentage</span>
-            <span class="font-medium text-white">{environmentalData.windPercentage}%</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-neutral-400">Humidity</span>
-            <span class="font-medium text-white">{environmentalData.humidity}%</span>
-          </div>
-        </div>
-      </div>
+          <Separator class="my-3 bg-white/[0.06]" />
 
-      <div class="rounded-2xl border border-white/10 bg-[#161922]/90 p-5 backdrop-blur-sm shadow-sm">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2 text-sm font-semibold text-white">
-            <svg
-              class="h-4 w-4 text-neutral-300"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+          <div class="space-y-1.5 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-neutral-400">Feels Like</span>
+              <span class="font-medium text-white">{environmentalData.feelsLike}&deg;</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-neutral-400">Wind Percentage</span>
+              <span class="font-medium text-white">{environmentalData.windPercentage}%</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-neutral-400">Humidity</span>
+              <span class="font-medium text-white">{environmentalData.humidity}%</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card class="rounded-2xl border-white/10 bg-[#161922]/90 backdrop-blur-sm shadow-xs">
+        <CardContent class="p-5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-sm font-semibold text-white">
+              <svg
+                class="h-4 w-4 text-neutral-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+                />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span>Manager</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="xs"
+              onclick={handleReset}
+              class="h-6 px-2 text-xs text-neutral-400 hover:bg-white/10 hover:text-white"
             >
-              <path
-                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
-              />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <span>Manager</span>
-          </div>
-          <button
-            type="button"
-            onclick={handleReset}
-            class="text-xs text-neutral-400 transition hover:text-white"
-          >
-            Reset
-          </button>
-        </div>
-
-        <div class="mt-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-white">Freeze Weather</span>
-            <div class="flex items-center gap-3">
-              <span class="text-xs {managerSettings.freezeWeather ? 'text-white' : 'text-neutral-500'}">
-                {managerSettings.freezeWeather ? 'Enabled' : 'Disabled'}
-              </span>
-              <Switch
-                checked={managerSettings.freezeWeather}
-                onchange={handleToggleFreeze}
-              />
-            </div>
+              Reset
+            </Button>
           </div>
 
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-white">Instant Change</span>
-            <div class="flex items-center gap-3">
-              <span class="text-xs {managerSettings.instantChange ? 'text-white' : 'text-neutral-500'}">
-                {managerSettings.instantChange ? 'Enabled' : 'Disabled'}
-              </span>
-              <Switch
-                checked={managerSettings.instantChange}
-                onchange={handleToggleInstant}
-              />
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-white">Freeze Weather</span>
+              <div class="flex items-center gap-3">
+                <span class="text-xs {managerSettings.freezeWeather ? 'text-white' : 'text-neutral-500'}">
+                  {managerSettings.freezeWeather ? 'Enabled' : 'Disabled'}
+                </span>
+                <Switch
+                  checked={managerSettings.freezeWeather}
+                  onCheckedChange={handleToggleFreeze}
+                />
+              </div>
             </div>
-          </div>
 
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-white">Enable Blackout</span>
-            <div class="flex items-center gap-3">
-              <span class="text-xs {managerSettings.enableBlackout ? 'text-white' : 'text-neutral-500'}">
-                {managerSettings.enableBlackout ? 'Enabled' : 'Disabled'}
-              </span>
-              <Switch
-                checked={managerSettings.enableBlackout}
-                onchange={handleToggleBlackout}
-              />
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-white">Instant Change</span>
+              <div class="flex items-center gap-3">
+                <span class="text-xs {managerSettings.instantChange ? 'text-white' : 'text-neutral-500'}">
+                  {managerSettings.instantChange ? 'Enabled' : 'Disabled'}
+                </span>
+                <Switch
+                  checked={managerSettings.instantChange}
+                  onCheckedChange={handleToggleInstant}
+                />
+              </div>
             </div>
-          </div>
 
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-white">Force Snow on Ground</span>
-            <div class="flex items-center gap-3">
-              <span class="text-xs {managerSettings.forceSnow ? 'text-white' : 'text-neutral-500'}">
-                {managerSettings.forceSnow ? 'Enabled' : 'Disabled'}
-              </span>
-              <Switch
-                checked={managerSettings.forceSnow}
-                onchange={handleToggleSnow}
-              />
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-white">Enable Blackout</span>
+              <div class="flex items-center gap-3">
+                <span class="text-xs {managerSettings.enableBlackout ? 'text-white' : 'text-neutral-500'}">
+                  {managerSettings.enableBlackout ? 'Enabled' : 'Disabled'}
+                </span>
+                <Switch
+                  checked={managerSettings.enableBlackout}
+                  onCheckedChange={handleToggleBlackout}
+                />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-white">Force Snow on Ground</span>
+              <div class="flex items-center gap-3">
+                <span class="text-xs {managerSettings.forceSnow ? 'text-white' : 'text-neutral-500'}">
+                  {managerSettings.forceSnow ? 'Enabled' : 'Disabled'}
+                </span>
+                <Switch
+                  checked={managerSettings.forceSnow}
+                  onCheckedChange={handleToggleSnow}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   </section>
 

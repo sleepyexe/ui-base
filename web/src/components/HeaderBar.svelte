@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { TabType } from "../types";
+  import { Button } from "$lib/components/ui/button";
 
   let {
     activeTab = "weather",
@@ -27,12 +28,13 @@
 
   <div class="flex items-center gap-5">
     {#if onClose}
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="icon-xs"
         onclick={onClose}
         aria-label="Close tablet"
         title="Close Tablet (ESC)"
-        class="flex h-6 w-6 items-center justify-center rounded-lg text-neutral-400 transition hover:bg-white/10 hover:text-white"
+        class="h-6 w-6 text-neutral-400 hover:bg-white/10 hover:text-white"
       >
         <svg
           class="h-3.5 w-3.5"
@@ -44,7 +46,7 @@
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
-      </button>
+      </Button>
     {/if}
   </div>
 </header>

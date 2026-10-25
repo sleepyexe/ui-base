@@ -1,6 +1,10 @@
 <script lang="ts">
   import type { TimeSettings } from '../types';
-  import Switch from './Switch.svelte';
+  import { Switch } from '$lib/components/ui/switch';
+  import { Card, CardContent } from '$lib/components/ui/card';
+  import { Badge } from '$lib/components/ui/badge';
+  import { Button } from '$lib/components/ui/button';
+  import { Slider } from '$lib/components/ui/slider';
   import { fetchNui } from '../utils/fetchNui';
 
   let {
@@ -25,7 +29,17 @@
     onApply?.();
   }
 
-  function handleSliderChange() {
+  function handleHoursChange(val: number) {
+    timeSettings.hours = val;
+    fetchNui('setTime', {
+      hours: timeSettings.hours,
+      minutes: timeSettings.minutes,
+    }).catch(() => {});
+    onApply?.();
+  }
+
+  function handleMinutesChange(val: number) {
+    timeSettings.minutes = val;
     fetchNui('setTime', {
       hours: timeSettings.hours,
       minutes: timeSettings.minutes,
@@ -52,91 +66,104 @@
     <p class="text-xs text-neutral-400">Synchronize in-game world clock and cycle rate.</p>
 
     <div class="mt-3 grid grid-cols-2 gap-4">
-      <div class="rounded-2xl border border-white/[0.06] bg-[#161922]/90 p-5 backdrop-blur-sm">
-        <div class="flex items-center justify-between text-xs text-neutral-400">
-          <span>Active Clock</span>
-          <span>{timeSettings.hours < 12 ? 'AM' : 'PM'}</span>
-        </div>
+      <Card class="rounded-2xl border-white/[0.06] bg-[#161922]/90 backdrop-blur-xs shadow-xs">
+        <CardContent class="p-5">
+          <div class="flex items-center justify-between text-xs text-neutral-400">
+            <span>Active Clock</span>
+            <Badge variant="outline" class="border-white/10 font-mono text-[10px] text-neutral-300">
+              {timeSettings.hours < 12 ? 'AM' : 'PM'}
+            </Badge>
+          </div>
 
-        <div class="my-4 text-center">
-          <span class="font-mono text-5xl font-bold tracking-tight text-white">
-            {String(timeSettings.hours).padStart(2, '0')}:{String(timeSettings.minutes).padStart(2, '0')}
-          </span>
-        </div>
+          <div class="my-4 text-center">
+            <span class="font-mono text-5xl font-bold tracking-tight text-white">
+              {String(timeSettings.hours).padStart(2, '0')}:{String(timeSettings.minutes).padStart(2, '0')}
+            </span>
+          </div>
 
-        <div class="space-y-3 pt-1">
-          <div>
-            <div class="flex justify-between text-xs text-neutral-400 mb-1">
-              <span>Hours</span>
-              <span class="text-white font-mono">{timeSettings.hours}</span>
+          <div class="space-y-4 pt-1">
+            <div>
+              <div class="flex justify-between text-xs text-neutral-400 mb-2">
+                <span>Hours</span>
+                <span class="text-white font-mono">{timeSettings.hours}</span>
+              </div>
+              <Slider
+                type="single"
+                min={0}
+                max={23}
+                step={1}
+                bind:value={timeSettings.hours}
+                onValueChange={handleHoursChange}
+                class="py-1 cursor-pointer"
+              />
             </div>
-            <input
-              type="range"
-              min="0"
-              max="23"
-              bind:value={timeSettings.hours}
-              oninput={handleSliderChange}
-              class="w-full accent-amber-400 cursor-pointer h-1.5 bg-neutral-700 rounded-lg appearance-none"
-            />
-          </div>
 
-          <div>
-            <div class="flex justify-between text-xs text-neutral-400 mb-1">
-              <span>Minutes</span>
-              <span class="text-white font-mono">{timeSettings.minutes}</span>
+            <div>
+              <div class="flex justify-between text-xs text-neutral-400 mb-2">
+                <span>Minutes</span>
+                <span class="text-white font-mono">{timeSettings.minutes}</span>
+              </div>
+              <Slider
+                type="single"
+                min={0}
+                max={59}
+                step={1}
+                bind:value={timeSettings.minutes}
+                onValueChange={handleMinutesChange}
+                class="py-1 cursor-pointer"
+              />
             </div>
-            <input
-              type="range"
-              min="0"
-              max="59"
-              bind:value={timeSettings.minutes}
-              oninput={handleSliderChange}
-              class="w-full accent-amber-400 cursor-pointer h-1.5 bg-neutral-700 rounded-lg appearance-none"
-            />
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div class="rounded-2xl border border-white/[0.06] bg-[#161922]/90 p-5 backdrop-blur-sm">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2 text-sm font-semibold text-white">
-            <svg class="h-4 w-4 text-neutral-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-            <span>Time Manager</span>
-          </div>
-        </div>
-
-        <div class="mt-4 space-y-4">
+      <Card class="rounded-2xl border-white/[0.06] bg-[#161922]/90 backdrop-blur-xs shadow-xs">
+        <CardContent class="p-5">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-white">Freeze Time</span>
-            <div class="flex items-center gap-3">
-              <span class="text-xs {timeSettings.freezeTime ? 'text-white' : 'text-neutral-500'}">
-                {timeSettings.freezeTime ? 'Enabled' : 'Disabled'}
-              </span>
-              <Switch checked={timeSettings.freezeTime} onchange={toggleFreeze} />
+            <div class="flex items-center gap-2 text-sm font-semibold text-white">
+              <svg class="h-4 w-4 text-neutral-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span>Time Manager</span>
             </div>
           </div>
 
-          <div>
-            <span class="block text-xs text-white mb-2">Cycle Speed Multiplier</span>
-            <div class="grid grid-cols-4 gap-2">
-              {#each [1, 2, 5, 10] as scale}
-                <button
-                  type="button"
-                  onclick={() => setScale(scale)}
-                  class="rounded-xl border py-1.5 text-xs font-medium transition {timeSettings.timeScale === scale
-                    ? 'border-white/30 bg-[#1e2330] text-white'
-                    : 'border-white/[0.06] bg-[#12141c] text-neutral-400 hover:text-white'}"
-                >
-                  {scale}x
-                </button>
-              {/each}
+          <div class="mt-4 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-white">Freeze Time</span>
+              <div class="flex items-center gap-3">
+                <span class="text-xs {timeSettings.freezeTime ? 'text-white' : 'text-neutral-500'}">
+                  {timeSettings.freezeTime ? 'Enabled' : 'Disabled'}
+                </span>
+                <Switch
+                  checked={timeSettings.freezeTime}
+                  onCheckedChange={toggleFreeze}
+                />
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-xs text-white mb-2">Cycle Speed Multiplier</span>
+              <div class="grid grid-cols-4 gap-2">
+                {#each [1, 2, 5, 10] as scale}
+                  <Button
+                    type="button"
+                    variant={timeSettings.timeScale === scale ? 'secondary' : 'outline'}
+                    size="sm"
+                    onclick={() => setScale(scale)}
+                    class="rounded-xl py-1.5 text-xs font-medium transition {timeSettings.timeScale === scale
+                      ? 'border-white/30 bg-[#1e2330] text-white shadow-xs'
+                      : 'border-white/[0.06] bg-[#12141c] text-neutral-400 hover:text-white'}"
+                  >
+                    {scale}x
+                  </Button>
+                {/each}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   </section>
 
@@ -148,17 +175,18 @@
 
     <div class="mt-3 grid grid-cols-4 gap-3.5">
       {#each presets as p}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onclick={() => applyPreset(p.hours, p.minutes)}
-          class="flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#161922]/90 p-4 text-left transition hover:border-white/20 hover:bg-[#1b1f2b]"
+          class="h-auto flex flex-col items-start justify-between rounded-2xl border border-white/[0.06] bg-[#161922]/90 p-4 text-left transition hover:border-white/20 hover:bg-[#1b1f2b]"
         >
           <span class="text-[10px] uppercase tracking-wider text-neutral-500">Preset</span>
           <span class="text-sm font-semibold text-white">{p.label}</span>
           <span class="font-mono text-xs text-neutral-400">
             {String(p.hours).padStart(2, '0')}:{String(p.minutes).padStart(2, '0')}
           </span>
-        </button>
+        </Button>
       {/each}
     </div>
   </section>

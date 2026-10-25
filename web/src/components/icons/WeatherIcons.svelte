@@ -12,8 +12,7 @@
       stroke-linecap="round"
     />
   </svg>
-{:else}
-  {#if name === 'extrasunny'}
+{:else if name === 'extrasunny'}
     <svg class={className} viewBox="0 0 24 24" fill="currentColor">
       <circle cx="12" cy="12" r="5" />
       <path
@@ -104,4 +103,3 @@
       <circle cx="12" cy="12" r="9" />
     </svg>
   {/if}
-{/if}
